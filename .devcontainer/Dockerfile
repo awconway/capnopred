@@ -4,7 +4,11 @@ RUN install2.r --error \
     targets \
     languageserver \
     httpgd \
-    tidymodels
+    tidymodels \
+    glmnet \
+    TraMineR \
+    xgboost \
+    randomForest
 
     
 RUN installGithub.r \

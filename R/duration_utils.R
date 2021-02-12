@@ -2,6 +2,7 @@
 #' @export
 #' @importFrom dplyr pull filter
 #' @importFrom TraMineR seqdef
+#' @importFrom zoo na.trim
 as.seq <- function(data) {
   ids <- data %>%
     pull(ID) %>%
