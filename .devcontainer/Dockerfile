@@ -8,7 +8,8 @@ RUN install2.r --error \
     glmnet \
     TraMineR \
     xgboost \
-    randomForest
+    randomForest \
+    zoo
 
     
 RUN installGithub.r \
@@ -33,4 +34,4 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts
 
 # Needed for igraph in targets
-RUN apt-get update && apt-get install -y libglpk40 libxt6
+RUN apt-get update && apt-get install -y libglpk40 libxt6 fonts-firacode 
