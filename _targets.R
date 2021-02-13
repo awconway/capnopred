@@ -43,13 +43,13 @@ list(
   tar_target(training, training(init_split)),
   tar_target(testing, testing(init_split)),
 
-  tar_target(folds_index, create_custom_folds(training,
-    k = 5,
+  tar_target(folds_index, create_custom_folds(data_split,
+    k = 10,
     seed = 42
   )),
   tar_target(folds, group_vfold_cv(folds_index,
     group = fold,
-    v = 5
+    v = 10
   )),
   # workflow
 
