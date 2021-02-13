@@ -33,5 +33,6 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install libzip-dev \
     && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts
 
-# Needed for igraph in targets
-RUN apt-get update && apt-get install -y libglpk40 libxt6 fonts-firacode 
+RUN apt-get update && apt-get install -y libglpk40 libxt6 fonts-firacode python3-pip
+
+RUN python3 -m pip install radian
