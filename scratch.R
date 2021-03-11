@@ -36,3 +36,40 @@ filter(pred=="short" & long =="long")
         filter(dur >= lower_trigger,
         ID %in% resp_data$ID) %>% View()
 
+data <- testing %>%
+ mutate(outcome = ifelse(long == "long", 1, 0))
+
+ data$rf <- rf_test$.pred_long
+
+test <- dca(data = as.data.frame(data),
+        outcome = "outcome",
+        predictors = "Random forest",
+        smooth = TRUE,
+        xstop = 0.8
+      )
+
+test$net.benefit %>%
+select(-rf_sm,
+"Threshold" = threshold,
+"All" = all) %>%
+pivot_longer(cols = -Threshold, names_to = "Decisions", values_to = "Net benefit") %>%
+ggplot(aes(x = Threshold, y= `Net benefit`)) +
+geom_line(aes(color = Decisions)) +
+coord_cartesian( ylim = c(-0.1, 0.5))
+
+
+
+rf_test %>%
+    mutate(pred = ifelse(.pred_long > 0.4, "long", "short")) %>%
+    mutate(tp = ifelse(pred == "long" & long == "long", 1, 0)) %>%
+    mutate(fp = ifelse(pred == "long" & long == "short", 1, 0)) %>%
+    summarize(tpos = sum(tp)/nrow(rf_test),
+    fpos = sum(fp)/nrow(rf_test),
+    nb = tpos - fpos * (0.4/0.6))
+
+
+
+    ppv(estimate = factor(pred), truth = long) %>%
+    pull(.estimate)
+
+

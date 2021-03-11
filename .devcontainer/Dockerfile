@@ -2,6 +2,7 @@ FROM rocker/tidyverse
 
 RUN install2.r --error \
     targets \
+    tarchetypes \
     languageserver \
     httpgd \
     tidymodels \
@@ -9,12 +10,14 @@ RUN install2.r --error \
     TraMineR \
     xgboost \
     randomForest \
-    zoo
+    zoo \
+    flextable \
+    officedown \
+    officer
 
     
 RUN installGithub.r \
-    dreamRs/prefixer \
-    crsh/citr
+    ML4LHS/runway
 
 
 

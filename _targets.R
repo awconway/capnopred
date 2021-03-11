@@ -1,12 +1,10 @@
 library(targets)
-library(tidymodels)
-library(tidyverse)
-
+library(tarchetypes)
 
 devtools::load_all()
+options(tidyverse.quiet = TRUE)
 
-
-
+tar_option_set(packages = c("tidymodels", "tidyverse"))
 list(
   # Load in patient data and respiratory state data
   # and reformat into dataframe
@@ -68,13 +66,12 @@ list(
       all_nominal(),
       -has_role("id variable"),
       -all_outcomes()
-    )
-    ),
+    )),
 
   tar_target(wf, workflow() %>%
     add_recipe(base_rec)),
 
-  tar_target(class_metrics, metric_set(roc_auc, sens)),
+  tar_target(class_metrics, metric_set(ppv, sensitivity, specificity)),
 
   # random forest model
   tar_target(rf, rand_forest(trees = 50) %>%
@@ -86,7 +83,7 @@ list(
       add_model(rf) %>%
       fit_resamples(folds,
         # metrics = class_metrics,
-        control = control_resamples(save_pred = TRUE) # add this line
+        control = control_resamples(save_pred = TRUE)
       )
   ),
   tar_target(rf_metrics, collect_metrics(rf_fit)),
@@ -98,13 +95,50 @@ list(
     ppv(estimate = factor(pred), truth = long) %>%
     pull(.estimate)),
 
+  tar_target(rf_sens, rf_preds %>%
+    mutate(pred = ifelse(.pred_long > 0.5, "long", "short")) %>%
+    sensitivity(estimate = factor(pred), truth = long) %>%
+    pull(.estimate)),
+
+  tar_target(rf_f_meas, rf_preds %>%
+    mutate(pred = ifelse(.pred_long > 0.3, "long", "short")) %>%
+    f_meas(estimate = factor(pred), truth = long) %>%
+    pull(.estimate)),
+  tar_target(rf_precision, rf_preds %>%
+    mutate(pred = ifelse(.pred_long > 0.5, "long", "short")) %>%
+    precision(estimate = factor(pred), truth = long) %>%
+    pull(.estimate)),
+  tar_target(rf_recall, rf_preds %>%
+    mutate(pred = ifelse(.pred_long > 0.5, "long", "short")) %>%
+    recall(estimate = factor(pred), truth = long) %>%
+    pull(.estimate)),
+
+
+
   # Only when optimized feature selection and tuning
-  # tar_target(rf_test, last_fit(
-  #   wf %>%
-  #     add_model(rf),
-  #   init_split
-  # ) %>%
-  #   collect_metrics()),
+  tar_target(rf_test, last_fit(
+    wf %>%
+      add_model(rf),
+    init_split
+  ) %>%
+    collect_predictions()),
+
+  tar_target(
+    rf_thresh,
+    runway::threshperf_plot(rf_test %>%
+      mutate(outcome = ifelse(long == "long", 1, 0)),
+    outcome = "outcome",
+    prediction = ".pred_long"
+    )
+  ),
+  tar_target(
+    rf_cal,
+    runway::cal_plot(rf_test %>%
+      mutate(outcome = ifelse(long == "long", 1, 0)),
+    outcome = "outcome",
+    prediction = ".pred_long"
+    )
+  ),
 
   # xgboost model
   tar_target(boost, boost_tree() %>%
@@ -141,5 +175,39 @@ list(
         control = control_resamples(save_pred = TRUE) # add this line
       )
   ),
-  tar_target(glm_metrics, collect_metrics(glm_fit))
+  tar_target(glm_metrics, collect_metrics(glm_fit)),
+  tar_render(report, "manuscript.Rmd"),
+
+  # DCA
+
+  tar_target(dca_data, testing %>%
+    mutate(
+      outcome = ifelse(long == "long", 1, 0),
+      `Random forest` = rf_test$.pred_long
+    )),
+
+  tar_target(dca, dca(
+    data = as.data.frame(dca_data),
+    outcome = "outcome",
+    predictors = "Random forest",
+    smooth = TRUE,
+    xstart = 0.4,
+    xstop = 0.8,
+    graph = F,
+    # harm = 1/5 # wouldn't accept needing to intervene on 5 false postitives to get a true positive
+  )),
+
+  tar_target(dca_plot, dca$net.benefit %>%
+    select(-`Random forest_sm`,
+      "Threshold" = threshold,
+      -all,
+      "None" = none
+    ) %>%
+    pivot_longer(cols = -Threshold, names_to = "Decisions", values_to = "Net benefit") %>%
+    ggplot(aes(x = Threshold, y = `Net benefit`)) +
+    geom_line(aes(linetype = Decisions)) +
+    coord_cartesian(ylim = c(-0.2, 0.5)) +
+    theme_minimal() +
+    theme(legend.position = "bottom")
+    ) 
 )

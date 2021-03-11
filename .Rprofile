@@ -1,4 +1,6 @@
 if (interactive() && Sys.getenv("TERM_PROGRAM") == "vscode") {
+  options(vsc.rstudioapi = TRUE)
+  options(vsc.str.max.level = 2 )
   if ("httpgd" %in% .packages(all.available = TRUE)) {
     options(vsc.plot = FALSE)
     options(device = function(...) {
@@ -7,5 +9,4 @@ if (interactive() && Sys.getenv("TERM_PROGRAM") == "vscode") {
     })
   }
 }
-
-options(vsc.rstudioapi = TRUE)
+  
