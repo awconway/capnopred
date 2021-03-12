@@ -4,7 +4,11 @@ library(tarchetypes)
 devtools::load_all()
 options(tidyverse.quiet = TRUE)
 
-tar_option_set(packages = c("tidymodels", "tidyverse"))
+tar_option_set(packages = c(
+  "tidymodels",
+  "tidyverse",
+  "patchwork"
+))
 list(
   # Load in patient data and respiratory state data
   # and reformat into dataframe
@@ -74,7 +78,7 @@ list(
   tar_target(class_metrics, metric_set(ppv, sensitivity, specificity)),
 
   # random forest model
-  tar_target(rf, rand_forest(trees = 50) %>%
+  tar_target(rf, rand_forest(trees = 500) %>%
     set_engine("randomForest") %>%
     set_mode("classification")),
   tar_target(
@@ -186,7 +190,7 @@ list(
       `Random forest` = rf_test$.pred_long
     )),
 
-  tar_target(dca, dca(
+  tar_target(dca_none, dca(
     data = as.data.frame(dca_data),
     outcome = "outcome",
     predictors = "Random forest",
@@ -194,20 +198,61 @@ list(
     xstart = 0.4,
     xstop = 0.8,
     graph = F,
-    # harm = 1/5 # wouldn't accept needing to intervene on 5 false postitives to get a true positive
+    # wouldn't accept needing to intervene on 5 false postitives to get a true positive
+    harm = 1 / 5
   )),
 
-  tar_target(dca_plot, dca$net.benefit %>%
+  tar_target(dca_plot_none, dca_none$net.benefit %>%
     select(-`Random forest_sm`,
       "Threshold" = threshold,
       -all,
-      "None" = none
+      "Alarm at ≥30 seconds" = none
     ) %>%
-    pivot_longer(cols = -Threshold, names_to = "Decisions", values_to = "Net benefit") %>%
+    pivot_longer(
+      cols = -Threshold,
+      names_to = "Decisions",
+      values_to = "Net benefit"
+    ) %>%
     ggplot(aes(x = Threshold, y = `Net benefit`)) +
     geom_line(aes(linetype = Decisions)) +
-    coord_cartesian(ylim = c(-0.2, 0.5)) +
+    coord_cartesian(ylim = c(-0.2, 0.2)) +
     theme_minimal() +
-    theme(legend.position = "bottom")
-    ) 
+    theme(
+      legend.position = "bottom",
+      legend.title = element_blank()
+    )),
+  tar_target(dca_all, dca(
+    data = as.data.frame(dca_data),
+    outcome = "outcome",
+    predictors = "Random forest",
+    smooth = TRUE,
+    xstart = 0.4,
+    xstop = 0.8,
+    graph = F,
+  )),
+
+  tar_target(dca_plot_all, dca_all$net.benefit %>%
+    select(-`Random forest_sm`,
+      "Threshold" = threshold,
+      "Alarm at ≥15 seconds" = all,
+      -none
+    ) %>%
+    pivot_longer(
+      cols = -Threshold,
+      names_to = "Decisions",
+      values_to = "Net benefit"
+    ) %>%
+    ggplot(aes(x = Threshold, y = `Net benefit`)) +
+    geom_line(aes(linetype = Decisions)) +
+    coord_cartesian(ylim = c(-0.2, 0.2)) +
+    theme_minimal() +
+    theme(
+      legend.position = "bottom",
+      legend.title = element_blank()
+    )),
+
+  tar_target(
+    dca_plot_combined,
+    dca_plot_none + dca_plot_all + plot_annotation(tag_levels = "A")
+  )
 )
