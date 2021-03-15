@@ -7,9 +7,9 @@ bibliography: "Extras/references.bib"
 
 A capnography waveform displays the level of expired carbon dioxide (CO~2~) over time to show changes in concentrations throughout the respiratory cycle. Capnography waveform abnormalities assist in the detection and diagnosis of specific conditions, such as partial airway obstruction and apnea. For this reason, implementing capnography into practice for respiratory monitoring is considered a high priority to improve patient safety by leading authorities including peak professional organisations for anaesthesia in Canada, the United States and Europe.[@apfelbaum2018; @hinkelbeinEuropeanSocietyAnaesthesiology2018; @Dobson2018]
 
-A potential consequence to consider in regard to the implementation of capnography for patient monitoring in inpatient wards is alarm fatigue. Alarm fatigue has been linked to patient deaths resulting from clinicians becoming desensitized to alarms leading to delayed responses to clinical deterioration.[@chopra2014redesigning] Deciphering which capnography waveform abnormalities deserve intervention (and therefore alarms to signal the event to clinicians) from those that do not is an essential step towards successful implementation of this technology into practice. For example, triggering alarms after short periods of apnea leads to frequent interruptions and potentially increases risk of alarm fatigue. Conversely, only intervening once an apneic period reaches a longer threshold negates the potential benefits of capnography on patient safety by improving ventilation. In practice, two alternative strategies for capnography alarm management are typically used. The 'aggressive' strategy is for alarms to be triggered after short periods of apnea (15 seconds). The 'conservative' approach triggers the alarm only once the patient has been apneic for a prolonged period (30 seconds). 
+A potential consequence to consider in regard to the implementation of capnography for patient monitoring in inpatient wards is alarm fatigue. Alarm fatigue has been linked to patient deaths resulting from clinicians becoming desensitized to alarms leading to delayed responses to clinical deterioration.[@chopra2014redesigning] Deciphering which capnography waveform abnormalities deserve intervention (and therefore alarms to signal the event to clinicians) from those that do not is an essential step towards successful implementation of this technology into practice. For example, triggering alarms after short periods of apnea leads to frequent interruptions and potentially increases risk of alarm fatigue. Conversely, only intervening once an apneic period reaches a longer threshold negates the potential benefits of capnography on patient safety by improving ventilation. In practice, two alternative strategies for capnography alarm management are typically used. The 'aggressive' strategy is for alarms to be triggered after short periods of apnea (e.g. 15 seconds). The 'conservative' approach triggers the alarm only once the patient has been apneic for a prolonged period (e.g. 30 seconds). 
 
-It is possible that capnography monitor alarm management may be improved upon by using machine learning to create a ‘smart alarm’ that can alert clinicians for apneic events that are predicted to be prolonged. Such an approach aligns with a call from The Society for Critical Care Medicine Alarm and Alert Fatigue Task Force, that machine learning techniques should be used to advance the quality of alerts that clinicians receive and to individualize alert delivery based on clinician response characteristics, such as alert frequency and severity.
+It is possible that capnography monitor alarm management may be improved upon by using machine learning to create a ‘smart alarm’ that can alert clinicians for apneic events that are predicted to be prolonged. Such an approach aligns with a call from The Society for Critical Care Medicine Alarm and Alert Fatigue Task Force, that machine learning techniques should be used to advance the quality of alerts that clinicians receive and to individualize alert delivery based on clinician response characteristics, such as alert frequency and severity.[@winters2018society]
 
 For the aggressive strategy, only triggering an alarm for apneas predicted to be prolonged would reduce the total alarm burden and potentially reduce the risk of alarm fatigue. The downside of applying a machine learning approaching to the aggressive apnea treatment strategy would be that some prolonged apneas may not receive early intervention if the model incorrectly predicted that the apnea will not last for >30 seconds (i.e. the false negatives). For the conservative strategy, triggering an alarm at the 15-second timepoint for apneas predicted to be prolonged could reduce the total time of apnea, as treatment could be initiated earlier. The downside of applying a machine learning approaching to the conservative apnea treatment strategy would be that there is the potential that it could increase the total alarm burden if the ratio of false positives (predicting the apnea will last for >30 seconds but it does not) to true positives (correctly predting at the 15 second timepoint that the apnea will last for >30 seconds) is high. The aim of this study was to determine the accuracy of machine learning models for predicting at the 15 second timepoint if a period of apnea will persist for 30 seconds or more with the goal of determining whether operationalizing these predictions in practice as alarm triggers would be beneficial. 
 
@@ -19,7 +19,7 @@ A secondary analysis of a prospective observational study was undertaken. Result
 
 ### Prediction Goal
 
-The prediction goal was to classify apneic events at the 15-second time-point as being either short (i.e. terminated prior to 30 seconds) or prolonged (persisted for 30 seconds or longer). The prediction algorithm was compared against a default alarm setting for capnography monitors, which triggers an alarm at 30 seconds of apnea.
+The prediction goal was to classify apneic events at the 15-second time-point as being either short (i.e. terminated prior to 30 seconds) or prolonged (persisted for 30 seconds or longer). The prediction algorithm was compared against typical default alarm settings for capnography monitors. These are the aggressive strategy, which triggers an alarm after 15 seconds of apnea, and the conservative strategy, which triggers an alarm after 30 seconds of apnea.
 
 ### Participants
 
@@ -35,13 +35,18 @@ Demographic data and clinical characteristics were collected from medical record
 
 ### Predictor variables
 
+Several raw demographic (age, sex) and clinical (ASA score, diagnosis of sleep apnea, dose and type of sedation and analgesia administered) variables were used as predictors. Features related to sedation dosing used as predictors in the model were the total dose of sedation and number of doses of sedation administered, time since first sedation and time since the previous dose of sedation. Other features were extracted from the capnography waveform to use as predictors, such as the previous respiratory state (defined as either normal breathing or abnormal), duration of the previous apneic event, time since the previous apneic event and total number of apneic events. A total of 18 variables were used. 
+
 ### Statistical analysis 
+
+Analyses were performed using R[@rcore2021]. Data as well as details about how to access the code and a reproducible computing environment required to verify the results is available from this webpage: <https://github.com/awconway/capnopred>. Split into a training and test set containing 75% and 25% of the data, respectively. 
 
 The best model was chosen with respect to the optimal balance between maximising the ability to predict prolonged events and alarm frequency. The alarm frequency metric used was the ratio of correct predictions of short apneic periods to the total number of apneic periods that triggered alerts, which was calculated as TP/(TP + FP + apneas > 30seconds). 
 
 #### Modelling
-
-
+Pre-processing steps included normalizing numeric predictors and using an interaction term for the duration of the previous respiratory state and total number of apneic events.
+- Normalized predictors
+- interaction terms
 
 #### Decision curve analysis
 
