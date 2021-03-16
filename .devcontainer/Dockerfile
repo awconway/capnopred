@@ -10,6 +10,7 @@ RUN install2.r --error \
     TraMineR \
     xgboost \
     randomForest \
+    vip \
     zoo \
     flextable \
     officedown \

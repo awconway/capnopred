@@ -2,6 +2,7 @@
 
 export("%>%")
 export(as.seq)
+export(combine_preds)
 export(create_custom_folds)
 export(custom_rsplit)
 export(dca)

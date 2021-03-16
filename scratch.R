@@ -59,23 +59,30 @@ coord_cartesian( ylim = c(-0.1, 0.5))
 
 
 
-rf_test %>%
+rf_preds %>%
     mutate(pred = ifelse(.pred_long > 0.6, "long", "short")) %>%
         mutate(total_pos = ifelse(pred == "long", 1, 0)) %>%
+        mutate(pos = ifelse(long == "long", 1, 0)) %>%
     mutate(tp = ifelse(pred == "long" & long == "long", 1, 0)) %>%
     mutate(fp = ifelse(pred == "long" & long == "short", 1, 0)) %>%
-    summarize(tpos = sum(tp)/nrow(rf_test),
+    summarize(
+        max = max(.pred_long),
+        tpos = sum(tp)/nrow(rf_test),
     fpos = sum(fp)/nrow(rf_test),
     nb = tpos - fpos * (0.6/0.4),
     tp = sum(tp),
     fp = sum(fp),
     total_pos = sum(total_pos),
+   pos = sum(pos),
     afrr_cons = sum(total_pos)/tp,
     afrr_aggr = 1 - (sum(total_pos)/nrow(rf_test)))
 
 
 
-    ppv(estimate = factor(pred), truth = long) %>%
-    pull(.estimate)
+threshperf_plot_multi(test %>%
+mutate(outcome = ifelse(long == "long", 1, 0)),
+outcome = "outcome", 
+prediction = ".pred_long",
+model = "model_name")
 
 
