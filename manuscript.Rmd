@@ -3,6 +3,10 @@ title: "Predicting prolonged apneic episodes using machine learning during nurse
 bibliography: "Extras/references.bib"
 ---
 
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE,message=FALSE, warning=FALSE)
+```
+
 ## Introduction
 
 A capnography waveform displays the level of expired carbon dioxide (CO~2~) over time to show changes in concentrations throughout the respiratory cycle. Capnography waveform abnormalities assist in the detection and diagnosis of specific conditions, such as partial airway obstruction and apnea. For this reason, implementing capnography into practice for respiratory monitoring is considered a high priority to improve patient safety by leading authorities including peak professional organisations for anaesthesia in Canada, the United States and Europe.[@apfelbaum2018; @hinkelbeinEuropeanSocietyAnaesthesiology2018; @Dobson2018]
@@ -63,13 +67,33 @@ We created a decision curve to plot net benefits across a range of probability t
 
 ## Results
 
+A total of 384 apneic events of at least 15 seconds duration from 61 patients who had a procedure with sedation were included in this analysis. A summary of participant characteristics is presented in Table 1.
+
 ### Discrimination
 
-A plot of the area under the receiver operating characteristics curves for the models using predictions from 10-fold cross-validation is presented in Figure 1. The random forest  had the best discriminatory power of the models, with a mean AUROC score of 0.66 (SE 0.03). A threshold performance plot, which summarises the discriminatory power for the models, including values for sensitivity, specificity, positive predictive value and negative predictive value across all probability thresholds, is presented in Figure 2.
+A plot of the area under the receiver operating characteristics curves for the models using predictions from 10-fold cross-validation is presented in Figure 1. 
+
+```{r}
+targets::tar_read(roc_plot)
+```
+
+The random forest  had the best discriminatory power of the models, with a mean AUROC score of 0.66 (SE 0.03). A threshold performance plot, which summarises the discriminatory power for the models, including values for sensitivity, specificity, positive predictive value and negative predictive value across all probability thresholds, is presented in Figure 2.
+
+```{r}
+targets::tar_read(tpp)
+```
+
+
 
 ### Calibration
 
 The random forest model had the best callibration. It approximated observed risk at moderate (0.5) to high (0.8) thresholds (Figure 3), although risk was overestimated at very low thresholds and slighlty underestimated between 0.4 to 0.5. Other models severely overestimated risk at low probability thresholds and underestimated risk at high probability thresholds.
+
+```{r}
+targets::tar_read(cal_plot)
+```
+
+
 
 ### Decision curve analysis
 
@@ -81,13 +105,11 @@ Results from prior research indicated that using information about the history o
 
 We leveraged these preliminary findings about the associations between apneic events and the history of previous respiratory states in the present study by building a predictive model using a machine learning approach. A random forest model had the best discriminitive ability and calibration from those that we tested. However, it should be noted that the accuracy of this random forest model was still quite low (AUROC = 0.66). Additional research should be undertaken with larger sample sizes to validate our initially promising findings. 
 
-It should be noted, though, that many prediction modelling studies focused on clinical outcomes have yielded similarly low AUROC scores. For example, a recent study of the predictive ability of vital sign parameters for detection of clinical deterioration in subacute care patients yielded a AUROC score of 0.57.[@considine2020vital] When presented with a model with a low AUC scores, decision curve analysis can help elicit whether the model is "good enough" to use in practice. Based on our results, clinicians using the conservative alarm management strategy (alarm only at 30 seconds of apnea) who are willing to 'value' a false positive about 2-3 times more than a true positive would derive an overall net benefit from using the random forest model as a trigger for apnea alarms. This is because using the random forest model would produce a better outcome, in terms of the balance between true positives and false positives, for detection of apneic periods over 30 seconds, than a default strategy of waiting to trigger the alarm until the 30-second threshold.  
-
-
+Many prediction modelling studies focused on predicting clinical outcomes have yielded similarly low AUROC scores. For example, a recent study of the predictive ability of vital sign parameters for detection of clinical deterioration in subacute care patients yielded a AUROC score of 0.57.[@considine2020vital] When presented with a model with a low AUC scores, decision curve analysis can help elicit whether the model is "good enough" to use in practice. Based on our results, nurses currently using the conservative alarm management strategy (alarm only at 30 seconds of apnea) who are willing to 'value' a false positive about 2-3 times more than a true positive would derive an overall net benefit from instead using the random forest model as a trigger for apnea alarms. This is because using the random forest model would produce a better outcome, in terms of the balance between true positives and false positives, for detecting if an apneic event will be prolonged, than a default strategy of waiting to trigger the alarm until the 30-second threshold. Likewise, nurses currently using the aggressive capnography alarm management strategy (alarm triggered at 15 seconds of apnea) who are willing to 'value' a false positive about two-thirds the importance of a true positive would derive an overall net benefit from instead using the random forest model as a trigger for apnea alarms. This strategy would reduce the total alarm burden. 
 
 ### Limitations
 
-Cross-validation
+Although the number of apneas included in the models was high, the overall sample size for this study was small (n=102). Cross-validation
 
 Small sample size
 
