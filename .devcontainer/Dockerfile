@@ -14,7 +14,8 @@ RUN install2.r --error \
     zoo \
     flextable \
     officedown \
-    officer
+    officer \
+    gtsummary
 
     
 RUN installGithub.r \

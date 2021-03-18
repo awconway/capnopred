@@ -23,6 +23,11 @@ list(
     upper_trigger = 30
   )),
 
+  tar_target(
+    summary_table,
+    create_summary_table(combined)
+  ),
+
   tar_target(data_split, combined %>%
     make_train_id(
       seed = 42,
@@ -112,7 +117,7 @@ list(
   tar_target(
     tpp,
     runway::threshperf_plot_multi(
-     combined_preds,
+      combined_preds,
       outcome = "outcome",
       prediction = ".pred_long",
       model = "model_name"

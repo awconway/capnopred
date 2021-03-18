@@ -46,7 +46,7 @@ Several raw demographic (age, sex) and clinical (ASA score, diagnosis of sleep a
 Analyses were performed using R[@rcore2021]. Data as well as details about how to access the code and a reproducible computing environment required to verify the results is available from this webpage: <https://github.com/awconway/capnopred>. 
 
 #### Modelling
-We selected several candidate models to evaluate, including a random forest model, generalized linear model (logistic regression), lasso regression, ridge regression and the XGBoost model. Out of sample accuracy of the models was calculated using 10-fold cross-validation. 
+We selected several candidate models to evaluate, including a random forest model, generalized linear model (logistic regression), lasso regression, ridge regression and the XGBoost model. Out of sample accuracy of the models was calculated using 10-fold cross-validation. Many participants in the study contributed multiple apneic events to the dataset used for modelling. To take this dependency into account, we ensured that apneic events from individual participants were not ever included in both the training and testing partitions of the 10-fold cross-validation process. 
 
 The best model was chosen with respect to the optimal balance between maximising the ability to predict prolonged events and alarm frequency. The alarm frequency metric used was the ratio of correct predictions of short apneic periods to the total number of apneic periods that triggered alerts, which was calculated as TP/(TP + FP + apneas > 30seconds). Pre-processing steps included normalizing numeric predictors and using an interaction term for the duration of the previous respiratory state and total number of apneic events.
 
@@ -67,7 +67,11 @@ We created a decision curve to plot net benefits across a range of probability t
 
 ## Results
 
-A total of 384 apneic events of at least 15 seconds duration from 61 patients who had a procedure with sedation were included in this analysis. A summary of participant characteristics is presented in Table 1.
+A total of 384 apneic events of at least 15 seconds duration from 61 of the 102 patients who participated in this observational study were included in the present analysis. A summary of participant characteristics is presented in Table 1.
+
+```{r}
+targets::tar_read(summary_table)
+```
 
 ### Discrimination
 
@@ -109,10 +113,10 @@ Many prediction modelling studies focused on predicting clinical outcomes have y
 
 ### Limitations
 
-Although the number of apneas included in the models was high, the overall sample size for this study was small (n=102). Cross-validation
+Although the number of apneas included in the models was relative high, these were contributed by a small number of patients (n=61). We used cross-validation to minimize the possibility of overfitting. It should also be noted that the data used in this analysis were produced from an observation study conducted at jsut two hospitals that used a convenience sampling approach. Therefore the possibility of selection bias should be considered. The context in which the study was conducted should also be considered in regard to external validity. Participants in the study were patients undergoing procedures in a cardiac catheterization laboratory where small, bolus doses of midazolam and fentanyl were used for sedation. Other procedural sedation contexts may use different doses of sedation and the types of medications. It would not be expected that the results of this study could be generalized to those other contexts.  
 
-Small sample size
+### Conclusion
 
-Convenience sampling from two sites.
+
 
 ## References
