@@ -1,23 +1,88 @@
 ---
-title: "Predicting prolonged apneic episodes using machine learning during nurse-administered procedural sedation"
+title: "Predicting prolonged apnea during nurse-administered procedural sedation using machine learning"
 bibliography: "Extras/references.bib"
+csl: "Extras/anaesthesia.csl"
+# output: distill::distill_article
+author:
+  - Aaron Conway PhD:
+      email: aaron.conway@utoronto.ca
+      phone: +1 416 946 7112
+      address: 585 University Ave | Toronto, ON  M5G 2N2
+      institute: [PMCC, LBFON, QUT]
+      correspondence: true
+  - Carla Jungquist PhD:
+      institute: [UoB]
+      correspondence: false
+  - Kristina Chang MScN:
+      institute: [PMCC]
+      correspondence: false
+  - Navpreet Kamboj BScN:
+      institute: [LBFON]
+      correspondence: false
+  - Joanna Sutherland MBBS:
+      institute: [NSW, Coffs]
+      correspondence: false
+  - Sebastian Mafeld:
+      institute: [IR]
+      correspondence: false
+  - Matteo Parotto MD, PhD:
+      institute: [TGH, UoT]
+      correspondence: false
+institute:
+  - PMCC: Peter Munk Cardiac Centre, University Health Network, Toronto, Canada
+  - LBFON: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto, Toronto, Canada
+  - QUT: School of Nursing, Queensland University of Technology (QUT), Brisbane, Australia
+  - UoB: The University of Buffalo, Buffalo, New York, USA
+  - NSW: Rural Clinical School, University of New South Wales, Coffs Harbour, NSW, Australia
+  - Coffs: Department of Anaesthesia, Coffs Harbour Health Campus, Coffs Harbour, NSW, Australia
+  - IR: Interventional Radiology, JDMI, Toronto General Hospital
+  - TGH: Department of Anesthesia and Pain Management, Toronto General Hospital, UHN, Toronto, Canada
+  - UoT: Department of Anesthesia and Interdepartmental Division of Critical Care Medicine, University of Toronto, Toronto, Canada
+output:
+  officedown::rdocx_document:
+    reference_docx: Extras/manuscript_template.docx
+    pandoc_args:
+      - --lua-filter=Extras/scholarly-metadata.lua
+      - --lua-filter=Extras/author-info-blocks.lua
 ---
 
 ```{r setup, echo=FALSE}
 knitr::opts_chunk$set(echo = FALSE,message=FALSE, warning=FALSE)
 ```
 
+\pagebreak
+
+# Abstract
+
 ## Introduction
 
-A capnography waveform displays the level of expired carbon dioxide (CO~2~) over time to show changes in concentrations throughout the respiratory cycle. Capnography waveform abnormalities assist in the detection and diagnosis of specific conditions, such as partial airway obstruction and apnea. For this reason, implementing capnography into practice for respiratory monitoring is considered a high priority to improve patient safety by leading authorities including peak professional organisations for anaesthesia in Canada, the United States and Europe.[@apfelbaum2018; @hinkelbeinEuropeanSocietyAnaesthesiology2018; @Dobson2018]
+Capnography is commonly used for nurse-administered procedural sedation. This study aimed to determine the accuracy of machine learning models for predicting, at the 15-second time point, if apnea will persist for 30 seconds or more. This information would be useful for determining whether operationalizing these predictions in practice as alarm triggers would be beneficial. 
 
-A potential consequence to consider in regard to the implementation of capnography for patient monitoring in inpatient wards is alarm fatigue. Alarm fatigue has been linked to patient deaths resulting from clinicians becoming desensitized to alarms leading to delayed responses to clinical deterioration.[@chopra2014redesigning] Deciphering which capnography waveform abnormalities deserve intervention (and therefore alarms to signal the event to clinicians) from those that do not is an essential step towards successful implementation of this technology into practice. For example, triggering alarms after short periods of apnea leads to frequent interruptions and potentially increases risk of alarm fatigue. Conversely, only intervening once an apneic period reaches a longer threshold negates the potential benefits of capnography on patient safety by improving ventilation. In practice, two alternative strategies for capnography alarm management are typically used. The 'aggressive' strategy is for alarms to be triggered after short periods of apnea (e.g. 15 seconds). The 'conservative' approach triggers the alarm only once the patient has been apneic for a prolonged period (e.g. 30 seconds). 
+## Methods
+
+A secondary analysis of an observational study was conducted. We selected several candidate models to evaluate, including a random forest model, generalized linear model (logistic regression), lasso regression, ridge regression and the XGBoost model. Out of sample accuracy of the models was calculated using 10-fold cross-validation. The net benefit decision analytic measure was used to assist with deciding whether using the models in practice would lead to better outcomes on average than the default capnography alarm management strategies currently in place. The default strategies are: 1) the aggressive approach, which involves triggering an alarm after brief periods of apnea (typically 15 seconds); and 2) the conservative approach, which involves triggering an alarm for only prolonged periods of apnea (typically 30 seconds).
+
+## Results
+
+A total of 384 apneas longer than 15 seconds were observed in 61 of the 102 patients who participated in the observational study. Nearly half of the apneas (n=180) were prolonged. The random forest had the best discrimination (AUROC 0.66) and calibration. Net benefit associated with the random forest model exceeded the aggressive alarm management strategy but was lower than the conservative alarm management strategy.
+
+## Conclusion
+
+Decision curve analysis indicated that using a random forest model would lead to a better outcome for capnography alarm management in comparison to an aggressive strategy where alarms are triggered after 15 seconds of apnea. The model would not be superior to the conservative strategy, where alarms are only triggered after 30 seconds.
+
+\pagebreak
+
+## Introduction
+
+A capnography waveform displays the level of expired carbon dioxide (CO~2~) over time to show changes in concentrations throughout the respiratory cycle. Capnography waveform abnormalities assist in the detection and diagnosis of specific conditions, such as partial airway obstruction and apnea. For this reason, implementing capnography into practice for respiratory monitoring is considered a high priority to improve patient safety by leading authorities, including peak professional organizations for anesthesia in Canada, the United States, and Europe.[@apfelbaum2018; @hinkelbeinEuropeanSocietyAnaesthesiology2018; @Dobson2018] It is commonly used for nurse-administered procedural sedation, [@Conway_2014; @conway2013; @conway2013a] including in the interventional radiology setting.[@pella2018systematic; @brast2016capnography; @long2016capnography; @mafeld2020avoiding; @werthman2020administration] 
+
+A potential consequence to consider in regard to the implementation of capnography for patient monitoring in inpatient wards is alarm fatigue. Alarm fatigue has been linked to patient deaths resulting from clinicians becoming desensitized to alarms leading to delayed responses to clinical deterioration.[@chopra2014redesigning] Deciphering which capnography waveform abnormalities deserve intervention (and therefore alarms to signal the event to clinicians) from those that do not is an essential step towards successful implementation of this technology into practice. For example, triggering alarms after short periods of apnea leads to frequent interruptions and potentially increases the risk of alarm fatigue. Conversely, only intervening once an apneic period reaches a longer threshold negates the potential benefits of capnography on patient safety by improving ventilation. In practice, two alternative strategies for capnography alarm management are typically used. The 'aggressive' strategy is for alarms to be triggered after short periods of apnea (e.g. 15 seconds). The 'conservative' approach triggers the alarm only once the patient has been apneic for a prolonged period (e.g. 30 seconds). 
 
 It is possible that capnography monitor alarm management may be improved upon by using machine learning to create a ‘smart alarm’ that can alert clinicians for apneic events that are predicted to be prolonged. Such an approach aligns with a call from The Society for Critical Care Medicine Alarm and Alert Fatigue Task Force, that machine learning techniques should be used to advance the quality of alerts that clinicians receive and to individualize alert delivery based on clinician response characteristics, such as alert frequency and severity.[@winters2018society]
 
-For the aggressive strategy, only triggering an alarm for apneas predicted to be prolonged would reduce the total alarm burden and potentially reduce the risk of alarm fatigue. The downside of applying a machine learning approaching to the aggressive apnea treatment strategy would be that some prolonged apneas may not receive early intervention if the model incorrectly predicted that the apnea will not last for >30 seconds (i.e. the false negatives). For the conservative strategy, triggering an alarm at the 15-second timepoint for apneas predicted to be prolonged could reduce the total time of apnea, as treatment could be initiated earlier. The downside of applying a machine learning approaching to the conservative apnea treatment strategy would be that there is the potential that it could increase the total alarm burden if the ratio of false positives (predicting the apnea will last for >30 seconds, but it does not) to true positives (correctly predicting at the 15-second timepoint that the apnea will last for >30 seconds) is high. This study aimed to determine the accuracy of machine learning models for predicting at the 15-second timepoint if a period of apnea will persist for 30 seconds or more with the goal of determining whether operationalizing these predictions in practice as alarm triggers would be beneficial. 
+For the aggressive strategy, only triggering an alarm for apneas predicted to be prolonged would reduce the total alarm burden and potentially reduce the risk of alarm fatigue. The downside of applying a machine learning approaching to the aggressive apnea treatment strategy would be that some prolonged apneas may not receive early intervention if the model incorrectly predicted that the apnea will not last for >30 seconds (i.e. the false negatives). For the conservative strategy, triggering an alarm at the 15-second timepoint for apneas predicted to be prolonged could reduce the total time of apnea, as treatment could be initiated earlier. The downside of applying a machine learning approaching to the conservative apnea treatment strategy would be that there is the potential that it could increase the total alarm burden if the ratio of false positives (predicting the apnea will last for >30 seconds, but it does not) to true positives (correctly predicting at the 15-second time point that the apnea will last for >30 seconds) is high. This study aimed to determine the accuracy of machine learning models for predicting at the 15-second timepoint if a period of apnea will persist for 30 seconds or more with the goal of determining whether operationalizing these predictions in practice as alarm triggers would be beneficial. 
 
-# Methods
+## Methods
 
 A secondary analysis of a prospective observational study was undertaken. Results for the primary aim of the observational study are reported elsewhere.[@conway2019sequence] All participants provided written informed consent and the study was approved by human research ethics committees (UCH HREC 1614; SVHAC HREC 16/26; QUT 1600000641). The study was undertaken in accordance with the Australian National Statement on Ethical Conduct in Human Research[@national2007] and it was registered prospectively (ACTRN12616001132437).
 
@@ -31,7 +96,7 @@ Participants in the study were consecutive adult patients scheduled to undergo a
 
 ### Sedation and monitoring
 
-The sedation regimen used for patients included in this study comprised bolus doses of intravenous midazolam and fentanyl. Sedation was administered by nurses who were trained in advanced life support. Routine clinical monitoring included cardiac rhythm and pulse oximetry monitoring as well as non-invasive blood pressure measurements every 5-10 minutes. The Respironics LoFlo sidestream CO~2~ sensor was used for capnography monitoring. A CO~2~ sampling cannula was inserted into the sideport of an oxygen face-mask or was integrated as a separate line for nasal cannulas. The capnography waveform was displayed on the main physiological monitoring screen. A default ‘No breaths detected’ alert was triggered for apnea but no other audible or visual alarms were set for the capnography monitor. No restrictions or specific instructions were provided to clinicians regarding the detection of capnography waveform abnormalities as part of the research protocol because the study used observational design.
+The sedation regimen used for patients included in this study comprised bolus doses of intravenous midazolam and fentanyl. Sedation was administered by nurses who were trained in advanced life support. Routine clinical monitoring included cardiac rhythm and pulse oximetry monitoring as well as non-invasive blood pressure measurements every 5-10 minutes. The Respironics LoFlo sidestream CO~2~ sensor was used for capnography monitoring. A CO~2~ sampling cannula was inserted into the sideport of an oxygen face-mask or was integrated as a separate line for nasal cannulas. The capnography waveform was displayed on the main physiological monitoring screen. A default ‘No breaths detected’ alert was triggered for apnea, but no other audible or visual alarms were set for the capnography monitor. No restrictions or specific instructions were provided to clinicians regarding the detection of capnography waveform abnormalities as part of the research protocol because the study used an observational design.
 
 ### Data collection
 
@@ -39,84 +104,123 @@ Demographic data and clinical characteristics were collected from medical record
 
 ### Predictor variables
 
-Several raw demographic (age, sex) and clinical (ASA score, diagnosis of sleep apnea, body mass index, dose and type of sedation and analgesia administered) variables were used as predictors. Features related to sedation dosing used as predictors in the model were the total dose of sedation and number of doses of sedation administered, time since first sedation and time since the previous dose of sedation. Other features were extracted from the capnography waveform to use as predictors, such as the previous respiratory state (defined as either normal breathing or abnormal), duration of the previous apneic event, time since the previous apneic event and total number of apneic events. A total of 18 predicotr variables were used. 
+Several raw demographic (age, sex) and clinical (ASA score, diagnosis of sleep apnea, body mass index, dose and type of sedation and analgesia administered) variables were used as predictors. Features related to sedation dosing used as predictors in the model were the total dose of sedation and number of doses of sedation administered, time since first sedation and the time since the previous dose of sedation. Other features were extracted from the capnography waveform to use as predictors, such as the previous respiratory state (defined as either normal breathing or abnormal), duration of the previous apneic event, time since the previous apneic event, and the total number of apneic events. A total of 18 predictor variables were used. 
 
 ### Statistical analysis 
 
 Analyses were performed using R[@rcore2021]. Data as well as details about how to access the code and a reproducible computing environment required to verify the results is available from this webpage: <https://github.com/awconway/capnopred>. 
 
 #### Modelling
-We selected several candidate models to evaluate, including a random forest model, generalized linear model (logistic regression), lasso regression, ridge regression and the XGBoost model. Out of sample accuracy of the models was calculated using 10-fold cross-validation. Many participants in the study contributed multiple apneic events to the dataset used for modelling. To take this dependency into account, we ensured that apneic events from individual participants were not ever included in both the training and testing partitions of the 10-fold cross-validation process. 
-
-The best model was chosen with respect to the optimal balance between maximising the ability to predict prolonged events and alarm frequency. The alarm frequency metric used was the ratio of correct predictions of short apneic periods to the total number of apneic periods that triggered alerts, which was calculated as TP/(TP + FP + apneas > 30seconds). Pre-processing steps included normalizing numeric predictors and using an interaction term for the duration of the previous respiratory state and total number of apneic events.
+We selected several candidate models to evaluate, including a random forest model, generalized linear model (logistic regression), lasso regression, ridge regression, and the XGBoost model. Out of sample accuracy of the models was calculated using 10-fold cross-validation. Many participants in the study contributed multiple apneic events to the dataset used for modeling. To take this dependency into account, we ensured that apneic events from individual participants were not included in both the training and testing partitions of the 10-fold cross-validation process. Pre-processing steps included normalizing numeric predictors and using an interaction term for the duration of the previous respiratory state and the total number of apneic events.
 
 #### Decision curve analysis
 
-We used the net benefit decision analytic measure to assist with deciding whether using the models in practice would lead to better outcomes on average than the default capnography alarm management strategies currently in place. The default strategies are: 1) the aggressive approach, which involves triggering an alarm after brief periods of apnea (typically 15 seconds); and 2) the concervative approach, which involves triggering an alarm for only prolonged periods of apnea (typically 30 seconds). The net benefit is calculated using the formula:
+We used the net benefit decision analytic measure to assist with deciding whether using the models in practice would lead to better outcomes on average than the default capnography alarm management strategies currently in place. The default strategies are: 1) the aggressive approach, which involves triggering an alarm after brief periods of apnea (typically 15 seconds); and 2) the conservative approach, which involves triggering an alarm for only prolonged periods of apnea (typically 30 seconds). The net benefit is calculated using the formula:
 
 $$
 NB = \frac{TP}{N} - \frac{FP}{N} \times \frac{Pt}{1-Pt}
 $$
 
 
-Where $NB$ is the net benefit, $TP$ is the total number of true positives (apneic event at 15 seconds which was predicted to be prolonged and did persist for >30 seconds), $FP$ is the total of number of false positives (apneic events at 15 seconds that was predicted to be prolonged but did not persist for >30 seconds), $N$ is the sample size (number of predictions made) and $Pt$ is the probability threshold. 
+Where $NB$ is the net benefit, $TP$ is the total number of true positives (apneic event at 15 seconds which was predicted to be prolonged and did persist for >30 seconds), $FP$ is the total number of false positives (apneic events at 15 seconds that was predicted to be prolonged but did not persist for >30 seconds), $N$ is the sample size (number of predictions made), and $Pt$ is the probability threshold. 
 
-This formula essentially transforms the total number of true positives and false positives into a standardized scale, weighted by the relative harm of a false-positive result.[@vickers2006decision] For example, a net benefit of 0.07 means the net benefit of using the model would be 7 true positives from every 100 predictions from the model. This net benefit can result from any combination of true positives and false positives.[@vickers2016net] A probability threshold of 0.5 indicates that avoiding a false positive is as important to a clinician as identifiying a true positive. Preferences for probability thresholds below 0.5 are weighted such that identifying a true positive is more valuable than avoiding a false positive. Preferences for probability thresholds above 0.5 are weighted such that avoiding a false positive is more valuable than identifying a true positive. For example, for a $Pt$ of 0.75, the 'value' of a false positive is three true positives (0.7/0.25 = 3). In other words, to create a net benefit from using the model at this probability threshold, there must be more than three true positives for every false positive prediction made from the model. Conversely, for a $Pt$ of 0.25, the 'value' of a false positive is weighted far lower, at only a third of a true positive (0.25/0.75 = 0.33). This means that a net benefit would be achieved if there was more than one true positive for every three false positives.  Decision curves can be interpreted such that the strategy with the highest net benefit at each probability threshold has the highest clinical value.[@vickers2016net]
+This formula essentially transforms the total number of true positives and false positives into a standardized scale, weighted by the relative harm of a false-positive result.[@vickers2006decision] For example, a net benefit of 0.07 means the net benefit of using the model would be seven true positives from every 100 predictions from the model. This net benefit can result from any combination of true positives and false positives.[@vickers2016net] A probability threshold of 0.5 indicates that avoiding a false positive is as important to a clinician as identifying a true positive. Preferences for probability thresholds below 0.5 are weighted such that identifying a true positive is more valuable than avoiding a false positive. Preferences for probability thresholds above 0.5 are weighted such that avoiding a false positive is more valuable than identifying a true positive. For example, for a $Pt$ of 0.75, the 'value' of a false positive is three true positives (0.7/0.25 = 3). In other words, to create a net benefit from using the model at this probability threshold, there must be more than three true positives for every false positive prediction made from the model. Conversely, for a $Pt$ of 0.25, the 'value' of a false positive is weighted far lower, at only a third of a true positive (0.25/0.75 = 0.33). This means that a net benefit would be achieved if there was more than one true positive for every three false positives.  Decision curves can be interpreted such that the strategy with the highest net benefit at each probability threshold has the highest clinical value.[@vickers2016net]
 
-We created a decision curve to plot net benefits across a range of probability thresholds for the aggressive alarm management strategy (alarm triggered at 15 seconds of apnea) as well as for the conservative alarm management strategy (alarm triggered at 30 seconds of apnea). The decision curve takes into account a plausbile range of clinician preferences for the point at which an alarm should be triggered to signal that the patient is apneic. We tested thresholds in the range from 0.4 to 0.5 for the agressive alarm management strategy. In a practical sense, this means that we decided that all clinicians who usually use the aggressive alarm strategy would not ever accept a probability for prolonged apnea lower than 0.4 as a useful alarm trigger, because there would be little difference between this strategy and just setting the alarm for all apneas. We also decided that all clinicians would always consider that an alarm is indicated for the aggresive alarm manamagement strategy if the probability of prolonged apnea was higher than 0.5. A range of values were used because these probability thresholds can be interpreted as value preferences in the context of decision curve analysis. For example, a clinician who is more 'risk-averse' may elect for a more conservative probability threshold (closer to 0.4). Individual participant characteristics will also influence clinicians' decisions about probability thresholds. A clinician may elect to intervene when the probability for prolonged apnea is 0.4 for an elderley patient with multiple comorbidities but not for a young patient who may be more likely to be able to tolerate longer periods of apnea. For the conservative alarm management strategy comparison, we chose to plot the range of probability thresholds from 0.7 to 0.8. Higher values were chosen because the number of false positives would be an important consideration for clinicians already using a conservative alarm management approach. 
+We created a decision curve to plot net benefits across a range of probability thresholds for the aggressive alarm management strategy (alarm triggered at 15 seconds of apnea) as well as for the conservative alarm management strategy (alarm triggered at 30 seconds of apnea). The decision curve takes into account the full range of reasonable clinician preferences for the point at which an alarm should be triggered to signal that the patient is apneic. We tested thresholds in the range from 0.3 to 0.5 for the aggressive alarm management strategy. In a practical sense, this means that we decided that all clinicians who usually use the aggressive alarm strategy would not ever accept a probability for prolonged apnea lower than 0.3 as a useful alarm trigger because there would be little difference between this strategy and just setting the alarm for all apneas. We also decided that all clinicians would always consider that an alarm is indicated for the aggressive alarm management strategy if the probability of prolonged apnea was higher than 0.5. A range of values was used because these probability thresholds can be interpreted as value preferences that individual clinicians may reasonably choose in the context of clinical practice. For example, a clinician who is more 'risk-averse' may elect for a more conservative probability threshold (closer to 0.3). Individual participant characteristics will also influence clinicians' decisions about probability thresholds. A clinician may elect to intervene when the probability for prolonged apnea is 0.3 for an elderly patient with multiple comorbidities but not for a young patient who may be more likely to be able to tolerate longer periods of apnea. For the conservative alarm management strategy comparison, we chose to plot the range of probability thresholds from 0.7 to 0.8. Higher values were chosen because the number of false positives would be an important consideration for clinicians already using a conservative alarm management approach. 
 
 ## Results
 
-A total of 384 apneic events of at least 15 seconds duration from 61 of the 102 patients who participated in this observational study were included in the present analysis. A summary of participant characteristics is presented in Table 1.
+A total of 384 apneic events of at least 15 seconds duration from 61 of the 102 patients who participated in this observational study were included in the present analysis. A summary of participant characteristics is presented in Table \@ref(tab:tab1). Nearly half of the (n=180) of the apneic events were prolonged, indicating a balanced dataset for the prediction problem at hand.
 
-```{r}
-targets::tar_read(summary_table)
-```
 
 ### Discrimination
 
-A plot of the area under the receiver operating characteristics curves for the models using predictions from 10-fold cross-validation is presented in Figure 1. 
+A plot of the area under the receiver operating characteristics curves for the models using predictions from 10-fold cross-validation is presented in Figure \@ref(fig:roc). 
 
-```{r}
-targets::tar_read(roc_plot)
-```
-
-The random forest  had the best discriminatory power of the models, with a mean AUROC score of 0.66 (SE 0.03). A threshold performance plot, which summarises the discriminatory power for the models, including values for sensitivity, specificity, positive predictive value and negative predictive value across all probability thresholds, is presented in Figure 2.
-
-```{r}
-targets::tar_read(tpp)
-```
-
-
+The random forest had the best discriminatory power of the models, with a mean AUROC score of 0.66 (SE 0.03). A threshold performance plot, which summarises the discriminatory power for the models, including values for sensitivity, specificity, positive predictive value, and negative predictive value across all probability thresholds, is presented in Figure \@ref(fig:tpp).
 
 ### Calibration
 
-The random forest model had the best callibration. It approximated observed risk at moderate (0.5) to high (0.8) thresholds (Figure 3), although risk was overestimated at very low thresholds and slighlty underestimated between 0.4 to 0.5. Other models severely overestimated risk at low probability thresholds and underestimated risk at high probability thresholds.
-
-```{r}
-targets::tar_read(cal_plot)
-```
-
-
+The random forest model had the best calibration. It approximated observed risk at moderate (0.5) to high (0.8) thresholds (Figure \@ref(fig:cal)), although the risk was overestimated at very low thresholds and slightly underestimated between 0.4 to 0.5. Other models severely overestimated risk at low probability thresholds and underestimated risk at high probability thresholds.
 
 ### Decision curve analysis
 
-As the random forest performed the best in terms of discrimination and callibration, we chose this model to evaluate using decision curve analysis. Net benefit associated with the random forest model exceeded the aggressive alarm management strategy across all probability thresholds from the range of 0.4 to 0.5 (Figure 4A). The interpretation is that the best clinical outcome would be achieved for clinicians who are willing to initiate an intervention to treat apnea at the 15 second mark if the probability of it being prolonged was more than 40% by using the random forest model. The net benefit associated with the random forest model was higher than the conservative alarm management strategy across all probability thresholds from the range of 0.7 to 0.8 (Figure 4B).
+As the random forest performed the best in terms of discrimination and calibration, we chose this model to evaluate using decision curve analysis. The net benefit associated with the random forest model exceeded the aggressive alarm management strategy across all probability thresholds from the range of 0.3 to 0.5 (Figure \@ref(fig:dca)). The interpretation is that the best clinical outcome would be achieved for clinicians who are willing to initiate an intervention to treat apnea at the 15-second mark if the probability of it being prolonged was more than 40% by using the random forest model. The net benefit associated with the random forest model was lower than the conservative alarm management strategy across all probability thresholds from the range of 0.7 to 0.8 (Figure \@ref(fig:dca)).
 
 ## Discussion
 
 Results from prior research indicated that using information about the history of previous respiratory states may be a promising solution in regards to predicting durations of apneic periods. It was found in a study of capnography waveform abnormalities during nurse-administered sedation that the hazard for apnea increased two-fold (HR 2.14, 95% CI 1.75 - 2.62) when a patient was in a state of hypoventilation (defined as >10% reduction in ETCO~2~ from baseline).[@conway2019pre] The risk of apnea also increased with each additional sedation dose (HR 2.86; 95% CI 2.15 - 3.81).[@conway2019pre] Results from an earlier study in a different population also supported the observations that the onset of apneic periods during sedation are associated with the history of previous respiratory states. Krauss and colleagues[@krauss2016] used survival analysis to model the time to first apneic events in a sample of 312 patients undergoing procedural sedation with propofol or ketamine in the emergency department. It was identified that having an abnormal ETCO~2~ measurement 30, 60 and 90 seconds prior to an apneic event increased risk for apnea (hazard ratios with 95% CI for the different lag durations of 2.45 (1.63 - 3.69), 1.88 (1.21 - 2.92) and 2.06 (1.36 - 3.11), respectively).
 
-We leveraged these preliminary findings about the associations between apneic events and the history of previous respiratory states in the present study by building a predictive model using a machine learning approach. A random forest model had the best discriminitive ability and calibration from those that we tested. However, it should be noted that the accuracy of this random forest model was still quite low (AUROC = 0.66). Additional research should be undertaken with larger sample sizes to validate our initially promising findings. 
+We leveraged these preliminary findings about the associations between apneic events and the history of previous respiratory states in the present study by building a predictive model using a machine learning approach. A random forest model had the best discriminative ability and calibration from those that we tested. However, it should be noted that the accuracy of this random forest model was still quite low (AUROC = 0.66). Additional research should be undertaken with larger sample sizes to validate our initially promising findings. 
 
-Many prediction modelling studies focused on predicting clinical outcomes have yielded similarly low AUROC scores. For example, a recent study of the predictive ability of vital sign parameters for detection of clinical deterioration in subacute care patients yielded a AUROC score of 0.57.[@considine2020vital] When presented with a model with a low AUC scores, decision curve analysis can help elicit whether the model is "good enough" to use in practice. Based on our results, nurses currently using the conservative alarm management strategy (alarm only at 30 seconds of apnea) who are willing to 'value' a false positive about 2-3 times more than a true positive would derive an overall net benefit from instead using the random forest model as a trigger for apnea alarms. This is because using the random forest model would produce a better outcome, in terms of the balance between true positives and false positives, for detecting if an apneic event will be prolonged, than a default strategy of waiting to trigger the alarm until the 30-second threshold. Likewise, nurses currently using the aggressive capnography alarm management strategy (alarm triggered at 15 seconds of apnea) who are willing to 'value' a false positive about two-thirds the importance of a true positive would derive an overall net benefit from instead using the random forest model as a trigger for apnea alarms. This strategy would reduce the total alarm burden. 
+Many prediction modeling studies focused on predicting clinical outcomes have yielded similarly low AUROC scores. For example, a recent study of the predictive ability of vital sign parameters for detection of clinical deterioration in subacute care patients yielded an AUROC score of 0.57.[@considine2020vital] When presented with a model with low AUC scores, decision curve analysis can help elicit whether the model is "good enough" to use in practice. Based on our results, nurses currently using the conservative alarm management strategy (alarm only at 30 seconds of apnea) who are willing to 'value' a false positive about 2-3 times more than a true positive would not derive an overall net benefit from instead using the random forest model as a trigger for apnea alarms. This is because using the random forest model would produce a worse outcome, in terms of the balance between true positives and false positives, for detecting if an apneic event will be prolonged, than a default strategy of waiting to trigger the alarm until the 30-second threshold. 
+
+Conversely, nurses currently using the aggressive capnography alarm management strategy (alarm triggered at 15 seconds of apnea) who are willing to 'value' a false positive about two-thirds the importance of a true positive would derive an overall net benefit from instead using the random forest model as a trigger for apnea alarms. Using the random forest model as an additional input for an alarm trigger would reduce the total alarm burden and could be considered as an option for implementation into practice. To operationalize these predictions into capnography monitors, partnerships with industry would be required.[@glasgow2018nurse] Integrating predictive models into alarm management strategies for respiratory monitoring devices is also indicated in other contexts. For example, a recent study found that opioid-induced respiratory depression during recovery from anesthesia can be accurately predicted using a machine learning approach.[@jungquist2019identifying] In addition, user-centered design considerations, such as how the predictions should be communicated to nurses responsible for decision-making, would be important avenues for further research prior to implementation.[@risling2020advancing] 
+
+The finding that the model was able to produce an overall net benefit against the aggressive capnography alarm management strategy but not the conservative approach is a noteworthy finding. Further research with larger sample sizes is needed to increase the predictive power of models aimed at predicting the duration of apnea. Such research is warranted because triggering an alarm after 30 seconds of apnea that would have self-resolved without clinical intervention only 5 seconds later is just as clinically inconsequential as triggering an alert after 5 seconds of apnea that would similarly have resolved after a short period of time. In both of these circumstances, there would not have been enough time for the clinician's intervention to take effect. Yet, presumably in an attempt to reduce alarm burden, many capnography monitoring devices alarm settings default to triggering after apnea has been observed for 30 seconds. An ideal alternative to the conservative alarm strategy would be for clinicians to receive capnography monitor alarms as _early as possible_ in the course of an apneic event, _but only_ if the event will be prolonged for enough time for a clinical intervention to be implemented and exert its intended effect. Results from the present study did not achieve this goal. Yet, previous research indicates that finding such a solution may be worthwhile. An analysis of over 500 thousand patients found that respiratory compromise in interventional radiology procedures performed with moderate sedation contributed to worse clinical outcomes and higher costs.[@urman2019impact]
 
 ### Limitations
 
-Although the number of apneas included in the models was relative high, these were contributed by a small number of patients (n=61). We used cross-validation to minimize the possibility of overfitting. It should also be noted that the data used in this analysis were produced from an observation study conducted at jsut two hospitals that used a convenience sampling approach. Therefore the possibility of selection bias should be considered. The context in which the study was conducted should also be considered in regard to external validity. Participants in the study were patients undergoing procedures in a cardiac catheterization laboratory where small, bolus doses of midazolam and fentanyl were used for sedation. Other procedural sedation contexts may use different doses of sedation and the types of medications. It would not be expected that the results of this study could be generalized to those other contexts.  
+Although the number of apneas included in the models was relatively high, these were contributed by a small number of patients. We used cross-validation to minimize the possibility of overfitting. It should also be noted that the data used in this analysis were produced from an observational study conducted at two hospitals that used a convenience sampling approach. Therefore the possibility of selection bias should be considered. The context in which the study was conducted should also be considered in regard to external validity. Participants in the study were patients undergoing procedures in a cardiac catheterization laboratory where small, bolus doses of midazolam and fentanyl were used for sedation. Other procedural sedation contexts may use different doses of sedation and the types of medications. It would not be expected that the results of this study could be generalized to those other contexts.  
 
 ### Conclusion
 
+We evaluated several candidate models to determine their accuracy in predicting if an apnea at 15 seconds would be prolonged for more than 30 seconds. The random forest model provided the best discrimination and calibration. Decision curve analysis indicated that using the random forest model would lead to a better outcome for capnography alarm management in comparison to an aggressive strategy where alarms are triggered after 15 seconds of apnea. The model would not be superior to the conservative strategy, where alarms are only triggered after 30 seconds.
 
+\pagebreak
 
 ## References
+
+::: {#refs}
+:::
+
+\pagebreak
+
+## Figure legend
+
+Fig. 1 Area under receiver operating characteristics curve
+
+Fig. 2 Threshold performance plot for all models evaluated
+
+Fig. 3 Calibration plot for all models evaluated
+
+Fig. 4 Decision curve analysis plots. Panel A is the comparison for the aggressive alarm management strategy and panel B is the comparison for the conservative alarm management strategy.
+
+\pagebreak
+
+
+```{r tab.cap='Participant characteristics', tab.id = 'tab1'}
+targets::tar_read(summary_table)
+```
+
+\pagebreak
+
+```{r roc, fig.cap="Area under receiver operating characteristics curve"}
+targets::tar_read(roc_plot)
+```
+
+<!---BLOCK_MULTICOL_START--->
+
+<!---BLOCK_STOP--->
+
+<!--BLOCK_LANDSCAPE_START--->
+
+
+```{r tpp, fig.cap="Threshold performance plot for all models evaluated", fig.width=9}
+targets::tar_read(tpp)
+```
+
+\pagebreak
+
+
+```{r cal, fig.cap="Calibration plot for all models evaluated"}
+targets::tar_read(cal_plot)
+```
+\pagebreak
+
+
+```{r dca, fig.cap="Decision curve analysis plots. Panel A is the comparison for the aggressive alarm management strategy and panel B is the comparison for the conservative alarm management strategy", fig.width=7}
+targets::tar_read(dca_plot_combined)
+```
+
+<!---BLOCK_LANDSCAPE_STOP--->

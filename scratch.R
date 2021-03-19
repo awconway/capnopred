@@ -67,15 +67,16 @@ rf_preds %>%
     mutate(fp = ifelse(pred == "long" & long == "short", 1, 0)) %>%
     summarize(
         max = max(.pred_long),
-        tpos = sum(tp)/nrow(rf_test),
-    fpos = sum(fp)/nrow(rf_test),
+        tpos = sum(tp)/nrow(rf_preds),
+    fpos = sum(fp)/nrow(rf_preds),
     nb = tpos - fpos * (0.6/0.4),
     tp = sum(tp),
     fp = sum(fp),
     total_pos = sum(total_pos),
+   pos_pr = sum(pos)/nrow(rf_preds),
    pos = sum(pos),
     afrr_cons = sum(total_pos)/tp,
-    afrr_aggr = 1 - (sum(total_pos)/nrow(rf_test)))
+    afrr_aggr = 1 - (sum(total_pos)/nrow(rf_preds)))
 
 
 
@@ -86,3 +87,6 @@ prediction = ".pred_long",
 model = "model_name")
 
 
+data_split %>%
+distinct(ID) %>%
+count()

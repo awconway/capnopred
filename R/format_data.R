@@ -83,8 +83,8 @@ format_data <- function(resp_data, durations,
         )) %>%
         na.omit() %>%
         mutate(ASA = case_when(
-            ASA == 1 | ASA == 2 ~ "Low",
-            TRUE ~ "High"
+            ASA == 1 | ASA == 2 ~ "I or II",
+            TRUE ~ "III or IV"
         )) %>%
         mutate(last_state = case_when(
             last_state == "Normal breathing" ~ "Normal breathing",

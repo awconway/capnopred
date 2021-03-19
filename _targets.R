@@ -4,7 +4,10 @@ library(tarchetypes)
 devtools::load_all()
 options(tidyverse.quiet = TRUE)
 
-tar_option_set(packages = c("tidymodels", "tidyverse"))
+tar_option_set(packages = c(
+  "tidymodels", "tidyverse",
+  "patchwork"
+))
 list(
   # Load in patient data and respiratory state data
   # and reformat into dataframe
@@ -79,7 +82,7 @@ list(
   # tar_target(class_metrics, metric_set(ppv, sensitivity, specificity)),
 
   # random forest model
-  tar_target(rf, rand_forest(trees = 500) %>%
+  tar_target(rf, rand_forest(trees = 100) %>%
     set_engine("randomForest") %>%
     set_mode("classification")),
   tar_target(
@@ -237,20 +240,22 @@ list(
     select(-`Random forest_sm`,
       "Threshold" = threshold,
       -all,
-      "Alarm at 30 seconds of apnea" = none
+      "Alarm at 30 seconds" = none
     ) %>%
     pivot_longer(cols = -Threshold, names_to = "Decisions", values_to = "Net benefit") %>%
     ggplot(aes(x = Threshold, y = `Net benefit`)) +
-    geom_line(aes(linetype = Decisions)) +
+    geom_line(aes(color = Decisions)) +
     # coord_cartesian(ylim = c(-0.05, 0.1)) +
     theme_minimal() +
-    theme(legend.position = "bottom")),
+    theme(legend.position = "bottom",
+      legend.title = element_blank())),
+
   tar_target(dca15, dca(
     data = as.data.frame(dca_data),
     outcome = "outcome",
     predictors = "Random forest",
     smooth = TRUE,
-    xstart = 0.4,
+    xstart = 0.3,
     xstop = 0.5,
     graph = F,
   )),
@@ -258,15 +263,24 @@ list(
   tar_target(dca_plot15, dca15$net.benefit %>%
     select(-`Random forest_sm`,
       "Threshold" = threshold,
-      "Alarm at 15 seconds of apnea" = all,
+      "Alarm at 15 seconds" = all,
       -none
     ) %>%
     pivot_longer(cols = -Threshold, names_to = "Decisions", values_to = "Net benefit") %>%
     ggplot(aes(x = Threshold, y = `Net benefit`)) +
-    geom_line(aes(linetype = Decisions)) +
+    geom_line(aes(color = Decisions)) +
     coord_cartesian(ylim = c(0, 0.4)) +
     theme_minimal() +
-    theme(legend.position = "bottom")),
+    theme(
+      legend.position = "bottom",
+      legend.title = element_blank()
+    )),
+
+  tar_target(
+    dca_plot_combined,
+    ((dca_plot15 | dca_plot30) +
+      plot_annotation(tag_levels = "A"))
+  ),
 
   # manuscript
   tar_render(manuscript, "manuscript.Rmd")
