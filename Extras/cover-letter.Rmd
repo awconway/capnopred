@@ -1,0 +1,14 @@
+---
+date: "`r Sys.Date()`"
+toaddress: Journal of Radiology Nursing
+toname: Editorial Committee
+output: letters::uhn_letter
+knit: pagedown::chrome_print
+---
+
+On behalf of my co-authors, I am pleased to submit our manuscript entitled “Predicting prolonged apnea during nurse-administered procedural sedation using machine learning".
+
+Capnography is commonly used for nurse-administered procedural sedation, including in interventional radiology. Deciphering which capnography waveform abnormalities deserve intervention (and therefore alarms to signal the event to clinicians) from those that do not is an essential step towards successfully implementating this technology into practice. For example, triggering alarms after short periods of apnea leads to frequent interruptions and potentially increases the risk of alarm fatigue. Conversely, only intervening once an apneic period reaches a longer threshold negates capnography's potential benefits on patient safety by improving ventilation. In practice, two alternative strategies for capnography alarm management are typically used. The 'aggressive' strategy is for alarms to be triggered after short periods of apnea (e.g. 15 seconds). The 'conservative' approach triggers the alarm only once the patient has been apneic for a prolonged period (e.g. 30 seconds). This study aimed to determine the accuracy of machine learning models for predicting, at the 15-second time point, if apnea will persist for 30 seconds or more. This information would help determine whether operationalizing these predictions in practice as alarm triggers would be beneficial. 
+
+We conducted a secondary analysis of a prospective observational study. The primary aim of the observational study was to identify common patterns in capnography waveform abnormalities and factors that influence these patterns. Results for the primary aim of the observational study are reported elsewhere. We believe this secondary analysis makes a useful additional contribution to the evidence base, as it indicates the potential utility of a machine learning approach for optimizing alarm management during procedural sedation. 
+This approach aligns with a call from The Society for Critical Care Medicine Alarm and Alert Fatigue Task Force, that machine learning techniques should be used to advance the quality of alerts that clinicians receive and to individualize alert delivery based on clinician response characteristics, such as alert frequency and severity.
