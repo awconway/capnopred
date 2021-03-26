@@ -11,10 +11,7 @@ tar_option_set(packages = c(
 list(
   # Load in patient data and respiratory state data
   # and reformat into dataframe
-  tar_target(resp_data, format_raw(
-    patient = "data/myCapnoData.rds",
-    capno_data = "data/capno.rds"
-  )),
+  tar_target(resp_data, format_raw()),
 
   tar_target(resp_dur, as.seq(resp_data) %>%
     state.dur() %>%

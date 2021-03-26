@@ -2,9 +2,9 @@
 
 #' @export
 
-format_raw <- function(patient, capno_data) {
-  patient <- readRDS(patient)
-  capno_data <- readRDS(capno_data)
+format_raw <- function() {
+  patient <- readRDS(url('https://ndownloader.figshare.com/files/27274202'))
+  capno_data <- readRDS(url('https://ndownloader.figshare.com/files/27273737'))
 
   N <- length(names(capno_data))
   resp.data <- list()
