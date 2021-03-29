@@ -1,6 +1,6 @@
 ---
 date: "`r Sys.Date()`"
-toaddress: Journal of Radiology Nursing
+toaddress: JMIR Medical Informatics
 toname: Editorial Committee
 output: letters::uhn_letter
 knit: pagedown::chrome_print
@@ -12,3 +12,5 @@ Capnography is commonly used for nurse-administered procedural sedation, includi
 
 We conducted a secondary analysis of a prospective observational study. The primary aim of the observational study was to identify common patterns in capnography waveform abnormalities and factors that influence these patterns. Results for the primary aim of the observational study are reported elsewhere. We believe this secondary analysis makes a useful additional contribution to the evidence base, as it indicates the potential utility of a machine learning approach for optimizing alarm management during procedural sedation. 
 This approach aligns with a call from The Society for Critical Care Medicine Alarm and Alert Fatigue Task Force, that machine learning techniques should be used to advance the quality of alerts that clinicians receive and to individualize alert delivery based on clinician response characteristics, such as alert frequency and severity.
+
+I confirm that I agree to pay the article processing fee.
