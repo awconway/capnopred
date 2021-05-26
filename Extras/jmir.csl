@@ -65,7 +65,7 @@
           <text variable="publisher-place"/>
         </else>
       </choose>
-      <text variable="publisher"/>
+      <!-- <text variable="publisher"/> -->
     </group>
   </macro>
   <macro name="access">

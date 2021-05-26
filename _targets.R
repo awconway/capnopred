@@ -1,12 +1,11 @@
 library(targets)
 library(tarchetypes)
 
-devtools::load_all()
 options(tidyverse.quiet = TRUE)
 
 tar_option_set(packages = c(
   "tidymodels", "tidyverse",
-  "patchwork"
+  "patchwork", "capnopred"
 ))
 list(
   # Load in patient data and respiratory state data
@@ -31,7 +30,7 @@ list(
   tar_target(data_split, combined %>%
     make_train_id(
       seed = 42,
-      frac = 0.75
+      frac = 0.75 
     )),
 
   tar_target(
