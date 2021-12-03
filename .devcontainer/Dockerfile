@@ -19,7 +19,8 @@ RUN install2.r --error \
 
     
 RUN installGithub.r \
-    ML4LHS/runway
+    ML4LHS/runway \
+    awconway/capnopred
 
 
 
