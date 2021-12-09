@@ -10,7 +10,7 @@ combine_preds <- function(rf_preds,
   rf_preds$model_name <- "Random forest"
   boost_preds$model_name <- "XGboost"
   glm_preds$model_name <- "Logistic regression"
-  lasso_preds$model_name <- "Lasso regression"
+  lasso_preds$model_name <- "LASSO regression"
   ridge_preds$model_name <- "Ridge regression"
 
   bind_rows(

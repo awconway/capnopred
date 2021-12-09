@@ -51,25 +51,22 @@ knitr::opts_chunk$set(echo = FALSE,message=FALSE, warning=FALSE, fig.retina=8)
 
 ## Abstract
 
-### Background
+### Aim
 
-Capnography is commonly used for nurse-administered procedural sedation. Deciphering which capnography waveform abnormalities deserve intervention, and therefore alarms to signal the event to clinicians, from those that do not is an essential step towards successfully implementing this technology into practice. It is possible that capnography alarm management may be improved by using machine learning to create a ‘smart alarm’ that can alert clinicians for apneic events that are predicted to be prolonged.
+Determine the accuracy of machine learning models for predicting if apnea during nurse-administered procedural sedation will be prolonged (>30 seconds). 
 
-### Objective
+### Design
 
-To determine the accuracy of machine learning models for predicting, at the 15-second time point, if apnea will be prolonged (defined as apnea that persisted for 30 seconds or more). 
+Secondary analysis of an observational study.
 
 ### Methods
 
-A secondary analysis of an observational study was conducted. We selected several candidate models to evaluate, including a random forest model, generalized linear model (logistic regression), lasso regression, ridge regression and the XGBoost model. Out of sample accuracy of the models was calculated using 10-fold cross-validation. The net benefit decision analytic measure was used to assist with deciding whether using the models in practice would lead to better outcomes on average than the default capnography alarm management strategies currently in place. The default strategies are: 1) the aggressive approach, which involves triggering an alarm after brief periods of apnea (typically 15 seconds); and 2) the conservative approach, which involves triggering an alarm for only prolonged periods of apnea (typically 30 seconds).
+A selection of candidate models were evaluated. Out of sample accuracy was calculated using 10-fold cross-validation. Decision analysis was used to decide if the models were better, in terms of false positive and negatives, than alternative alarm management strategies, being: an aggressive approach (alarm after 15 seconds); or a conservative approach (alarm after 30 seconds).
 
 ### Results
 
-A total of 384 apneas longer than 15 seconds were observed in 61 of the 102 patients who participated in the observational study. Nearly half of the apneas (n=180) were prolonged. The random forest had the best discrimination (AUROC 0.66) and calibration. Net benefit associated with the random forest model exceeded the aggressive alarm management strategy but was lower than the conservative alarm management strategy.
+A total of 384 apneas longer than 15 seconds were observed in 61 of the 102 participants. Nearly half of the apneas (n=180) were prolonged. The random forest had the best discrimination (AUROC 0.66) and calibration. Net benefit associated with a random forest model exceeded the aggressive alarm management strategy but was lower than the conservative alarm management strategy.
 
-### Conclusion
-
-Decision curve analysis indicated that using a random forest model would lead to a better outcome for capnography alarm management compared to an aggressive strategy where alarms are triggered after 15 seconds of apnea. The model would not be superior to the conservative strategy, where alarms are only triggered after 30 seconds.
 
 **Keywords**
 
@@ -83,6 +80,8 @@ With the recent increase in electronic monitoring devices in the hospital settin
 
 A capnography waveform displays the level of expired carbon dioxide (CO~2~) over time to show changes in concentrations throughout the respiratory cycle. Capnography waveform abnormalities assist in detecting and diagnosing specific conditions, such as partial airway obstruction and apnea. For this reason, implementing capnography into practice for respiratory monitoring is considered a high priority to improve patient safety by leading authorities, including national and international professional organizations for anesthesiology in Canada, the United States, and Europe.[@apfelbaum2018; @hinkelbeinEuropeanSocietyAnaesthesiology2018; @Dobson2018] It is commonly used for nurse-administered procedural sedation, [@Conway_2014; @conway2013; @conway2013a] including in the interventional radiology setting.[@pella2018systematic; @brast2016capnography; @long2016capnography; @mafeld2020avoiding; @werthman2020administration] 
 
+## Background
+
 Deciphering which capnography waveform abnormalities deserve intervention (and therefore alarms to signal the event to clinicians) from those that do not is an essential step towards successfully implementing this technology into practice. For example, triggering alarms after short periods of apnea leads to frequent interruptions and potentially increases the risk of alarm fatigue. Conversely, only intervening once an apneic period reaches a longer threshold negates capnography's potential benefits on patient safety by improving ventilation. In practice, two alternative strategies for capnography alarm management are typically used. The 'aggressive' strategy is for alarms to be triggered after short periods of apnea (e.g. 15 seconds). The 'conservative' approach triggers the alarm only once the patient has been apneic for a prolonged period (e.g. 30 seconds). Preferences for the aggressive or conservative alarm threshold will be influenced by many factors, including the rate of oxygen supplmentation. The duration of time between the onset of apnea to hypoxemia increases with higher flows of oxygen.[@wong2019high]
 
 It is possible that capnography alarm management may be improved by using machine learning to create a ‘smart alarm’ that can alert clinicians for apneic events that are predicted to be prolonged. Such an approach aligns with a call from The Society for Critical Care Medicine Alarm and Alert Fatigue Task Force, that machine learning techniques should be used to advance the quality of alerts that clinicians receive and to individualize alert delivery based on clinician response characteristics, such as alert frequency and severity.[@winters2018society]
@@ -91,7 +90,11 @@ For the aggressive strategy, only triggering an alarm for apneas predicted to be
 
 ## Methods
 
-A secondary analysis of a prospective observational study was undertaken. The primary aim of the observational study was to identify common patterns in capnography waveform abnormalities and factors that influence these patterns. Results for the primary aim of the observational study are reported elsewhere.[@conway2019sequence] All participants provided written informed consent and the study was approved by human research ethics committees (UCH HREC 1614; SVHAC HREC 16/26; QUT 1600000641).
+A secondary analysis of a prospective observational study was undertaken. The primary aim of the observational study was to identify common patterns in capnography waveform abnormalities and factors that influence these patterns. Results for the primary aim of the observational study are reported elsewhere.[@conway2019sequence] 
+
+### Ethics
+
+All participants provided written informed consent and the study was approved by human research ethics committees (UCH HREC 1614; SVHAC HREC 16/26; QUT 1600000641).
 
 ### Prediction Goal
 
@@ -111,7 +114,7 @@ Data were collected from August 2016 to May 2018. Demographic data and clinical 
 
 ### Predictor variables
 
-Several raw demographic (age, sex) and clinical (ASA score, diagnosis of sleep apnea, body mass index, dose and type of sedation and analgesia administered) variables were used as predictors. Features related to sedation dosing used as predictors in the model were the total dose of sedation and number of doses of sedation administered, time since first sedation and the time since the previous dose of sedation. Other features were extracted from the capnography waveform to use as predictors, such as the previous respiratory state (defined as either normal breathing or abnormal), duration of the previous apneic event, time since the previous apneic event, and the total number of apneic events. A total of 18 predictor variables were used. 
+Several raw demographic (age, sex) and clinical (ASA score, diagnosis of sleep apnea, body mass index, dose and type of sedation and analgesia administered) variables were used as predictors. Features related to sedation dosing used as predictors in the model were the total dose of sedation and number of doses of sedation administered, time since first sedation and the time since the previous dose of sedation. Other features were extracted from the capnography waveform to use as predictors, such as the previous respiratory state (defined as either normal breathing or abnormal), duration of the previous apneic event, time since the previous apneic event, and the total number of apneic events. A total of 18 predictor variables were used. No imputation of missing data was performed. No imputation of missing data was performed.
 
 ### Statistical analysis 
 

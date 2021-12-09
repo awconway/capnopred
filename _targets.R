@@ -125,13 +125,14 @@ list(
 
   tar_target(
     cal_plot,
-    runway::cal_plot_multi(combined_preds,
+    cal_plot_multi(combined_preds,
       outcome = "outcome",
       prediction = ".pred_long",
       show_loess = TRUE,
       n_bins = 0,
       model = "model_name"
     )
+    
   ),
   tar_target(
     roc_plot,
@@ -236,7 +237,7 @@ list(
     select(-`Random forest_sm`,
       "Threshold" = threshold,
       -all,
-      "Alarm at 30 seconds" = none
+      "Alarm at 30 s" = none
     ) %>%
     pivot_longer(cols = -Threshold, names_to = "Decisions", values_to = "Net benefit") %>%
     ggplot(aes(x = Threshold, y = `Net benefit`)) +
@@ -259,7 +260,7 @@ list(
   tar_target(dca_plot15, dca15$net.benefit %>%
     select(-`Random forest_sm`,
       "Threshold" = threshold,
-      "Alarm at 15 seconds" = all,
+      "Alarm at 15 s" = all,
       -none
     ) %>%
     pivot_longer(cols = -Threshold, names_to = "Decisions", values_to = "Net benefit") %>%

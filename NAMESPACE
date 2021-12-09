@@ -2,6 +2,8 @@
 
 export("%>%")
 export(as.seq)
+export(cal_plot)
+export(cal_plot_multi)
 export(combine_preds)
 export(create_custom_folds)
 export(create_summary_table)
